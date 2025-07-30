@@ -67,26 +67,11 @@ npm install
 
 ### 4. Configurar Variables de Entorno (¡Paso Crucial!)
 
-Para que la aplicación funcione en tu entorno local, debes crear un archivo llamado `.env.local` en la **raíz del proyecto**.
+Para que la aplicación funcione en tu entorno local, crea un archivo llamado `.env.local` en la **raíz del proyecto**. Toma como referencia el archivo `.env.example` que se incluye en el repositorio y rellena cada variable con tus propias credenciales.
 
 **¡MUY IMPORTANTE!** Después de crear o modificar este archivo, **debes reiniciar completamente el servidor de desarrollo**. Detenlo con `Ctrl+C` y vuelve a ejecutar `npm run dev`.
 
-Copia y pega el siguiente contenido en tu archivo `.env.local` y reemplaza los valores con tus credenciales.
-
-```env
-#=========== CREDENCIALES DE SUPABASE =================
-# Claves públicas (seguras para el navegador)
-NEXT_PUBLIC_SUPABASE_URL=https://<ID_PROYECTO>.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<TU_CLAVE_PUBLICA_ANONIMA>
-
-# Clave secreta (solo para el servidor, NO la compartas)
-# Asegúrate de que el nombre de la variable sea el correcto.
-SUPABASE_SERVICE_ROLE_KEY=<TU_CLAVE_DE_ROL_DE_SERVICIO>
-
-#=========== CREDENCIALES DE GOOGLE AI (GEMINI) ========
-# Clave de API de Google AI (Requerida para las funciones de IA)
-GEMINI_API_KEY=<tu_clave_de_api_de_gemini>
-```
+En producción, estas variables deben almacenarse en **Google Secret Manager** y nunca dentro del repositorio.
 
 #### ¿Dónde obtener la Clave de API de Gemini?
 
