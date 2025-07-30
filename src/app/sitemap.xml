@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://studio--bingo-salesmate.us-central1.hosted.app</loc>
+    <lastmod>2024-07-23</lastmod>
+    <priority>1.0</priority>
+  </url>
+   <url>
+    <loc>https://studio--bingo-salesmate.us-central1.hosted.app/login</loc>
+    <lastmod>2024-07-23</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://studio--bingo-salesmate.us-central1.hosted.app/dashboard</loc>
+    <lastmod>2024-07-23</lastmod>
+    <priority>0.7</priority>
+  </url>
+    <url>
+    <loc>https://studio--bingo-salesmate.us-central1.hosted.app/articles</loc>
+    <lastmod>2024-07-23</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://studio--bingo-salesmate.us-central1.hosted.app/dashboard/logs</loc>
+    <lastmod>2024-07-23</lastmod>
+    <priority>0.6</priority>
+  </url>
+</urlset>
