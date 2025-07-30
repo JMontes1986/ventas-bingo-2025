@@ -34,7 +34,7 @@ export default function LoginPage() {
     }
     setIsLoading(true);
 
-    const result = await login(username, password);
+    const result = await login(username.toLowerCase(), password);
 
     setIsLoading(false);
 
@@ -75,7 +75,7 @@ export default function LoginPage() {
                 placeholder="su_usuario"
                 required
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => setUsername(e.target.value.toLowerCase())}}
                 disabled={isLoading}
               />
             </div>
