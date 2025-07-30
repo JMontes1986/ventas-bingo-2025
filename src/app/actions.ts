@@ -102,17 +102,18 @@ export async function login(credentials: { email: string; password?: string }): 
   if (!credentials.email || !credentials.password) {
         return { success: false, error: 'Usuario y contraseña son requeridos.' };
   }
-  
+    
   const { supabaseAdmin, error: adminClientError } = createAdminClient();
   if (adminClientError || !supabaseAdmin) {
     return { success: false, error: adminClientError };
   }
 
   try {
+      const username = credentials.email.toLowerCase();
     const { data: cajero, error: queryError } = await supabaseAdmin
       .from('cajeros')
       .select('*, password_hash')
-      .eq('username', credentials.email)
+      .eq('username', username)
       .single();
 
     if (queryError || !cajero) {
@@ -841,8 +842,8 @@ export async function createCajero(requestor: Cajero, formData: CajeroFormData):
     }
 
     try {
-        const { password, ...restOfData } = formData;
-        const dataToInsert = { ...restOfData, password_hash: password };
+        const { password, username, ...restOfData } = formData;
+        const dataToInsert = { ...restOfData, username: username.toLowerCase(), password_hash: password };
 
         const { data, error } = await supabaseAdmin
             .from('cajeros')
@@ -873,8 +874,8 @@ export async function updateCajero(requestor: Cajero, cajeroId: string | number,
     }
 
     try {
-        const { password, ...restOfData } = formData;
-        const dataToUpdate: Partial<Cajero> & { password_hash?: string } = { ...restOfData };
+        const { password, username, ...restOfData } = formData;
+        const dataToUpdate: Partial<Cajero> & { password_hash?: string } = { ...restOfData, username: username.toLowerCase() };
         
         if (password) {
             dataToUpdate.password_hash = password;
