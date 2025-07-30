@@ -138,7 +138,11 @@ const CajeroFormDialog = ({ isOpen, onClose, onSubmit, cajero }: CajeroFormDialo
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="ej: jperez" />
+                      <Input
+                        {...field}
+                        placeholder="ej: jperez"
+                        onChange={(e) => field.onChange(e.target.value.toLowerCase())}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
