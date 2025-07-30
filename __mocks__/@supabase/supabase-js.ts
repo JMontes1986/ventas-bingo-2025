@@ -1,5 +1,5 @@
 const users = [
-  { id: 1, username: 'admin', password_hash: 'secret', nombre_completo: 'Admin', activo: true }
+  { id: 1, username: 'admin', password_hash: '$2a$10$KGoG08CV6FZySPbz2R5Xd.l2U0AmfYKH57yK.5x.iCMq6J1iNIzxe', nombre_completo: 'Admin', activo: true }
 ];
 
 class TableQuery {
