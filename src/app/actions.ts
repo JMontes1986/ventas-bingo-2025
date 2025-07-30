@@ -25,8 +25,11 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Función para crear el cliente de admin de forma segura BAJO DEMANDA
 const createAdminClient = (): { supabaseAdmin: SupabaseClient | null; error: string | null } => {
-    // Intenta leer la variable con el nombre completo y luego con el nombre más corto.
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_ROLE_KEY;
+   // Intenta leer la variable con cualquiera de los nombres que podrían usarse
+    // para la clave de servicio.
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+        || process.env.SUPABASE_SECRET_ROLE_KEY
+        || process.env.SUPABASE_SERVICE_KEY;
 
     if (!serviceRoleKey) {
         const errorMessage = "CRITICAL: SUPABASE_SERVICE_ROLE_KEY is not configured in the environment. The application cannot perform administrative actions.";
