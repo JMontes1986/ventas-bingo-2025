@@ -11,7 +11,7 @@ import { getDashboardAnalysis as getDashboardAnalysisFlow } from '@/ai/flows/das
 import { getCashierWarning as getCashierWarningFlow } from '@/ai/flows/cashierWarningFlow';
 import { unstable_noStore as noStore } from 'next/cache';
 import { ai } from '@/ai/genkit';
-
+import * as bcrypt from 'bcryptjs';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -121,7 +121,7 @@ export async function login(credentials: { email: string; password?: string }): 
       return { success: false, error: 'Usuario o contraseña incorrectos.' };
     }
     
-    const isPasswordCorrect = cajero.password_hash === credentials.password;
+    const isPasswordCorrect = await bcrypt.compare(credentials.password, cajero.password_hash ?? '');
 
     if (!isPasswordCorrect) {
         await createAuditLog(
@@ -843,7 +843,8 @@ export async function createCajero(requestor: Cajero, formData: CajeroFormData):
 
     try {
         const { password, username, ...restOfData } = formData;
-        const dataToInsert = { ...restOfData, username: username.toLowerCase(), password_hash: password };
+        const hashed = await bcrypt.hash(password, 10);
+        const dataToInsert = { ...restOfData, password_hash: hashed };
 
         const { data, error } = await supabaseAdmin
             .from('cajeros')
@@ -878,7 +879,7 @@ export async function updateCajero(requestor: Cajero, cajeroId: string | number,
         const dataToUpdate: Partial<Cajero> & { password_hash?: string } = { ...restOfData, username: username.toLowerCase() };
         
         if (password) {
-            dataToUpdate.password_hash = password;
+            dataToUpdate.password_hash = await bcrypt.hash(password, 10);
         }
 
         const { data, error } = await supabaseAdmin
