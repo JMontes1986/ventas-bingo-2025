@@ -127,4 +127,6 @@ firebase apphosting:backends:deploy
 ```
 Sigue las instrucciones de la CLI para seleccionar tu backend y completar el proceso. Una vez finalizado, tu aplicación estará publicada y será completamente funcional.
 
-    
+## Convención de Usernames
+
+Los nombres de usuario no distinguen entre mayúsculas y minúsculas. Al crear, actualizar o iniciar sesión, la aplicación transforma automáticamente el valor ingresado a **minúsculas**. Si importas usuarios desde otro sistema, asegúrate de que los usernames estén en minúsculas para evitar duplicados o problemas de autenticación.
