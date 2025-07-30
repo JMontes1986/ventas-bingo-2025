@@ -75,7 +75,7 @@ export default function LoginPage() {
                 placeholder="su_usuario"
                 required
                 value={username}
-                onChange={(e) => setUsername(e.target.value.toLowerCase())}}
+                onChange={(e) => setUsername(e.target.value.toLowerCase())}
                 disabled={isLoading}
               />
             </div>
