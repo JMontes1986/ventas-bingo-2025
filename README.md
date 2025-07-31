@@ -67,7 +67,7 @@ npm install
 
 ### 4. Configurar Variables de Entorno (¡Paso Crucial!)
 
-Para que la aplicación funcione en tu entorno local, crea un archivo llamado `.env.local` en la **raíz del proyecto**. Toma como referencia el archivo `.env.example` que se incluye en el repositorio y rellena cada variable con tus propias credenciales.
+Para que la aplicación funcione en tu entorno local, crea un archivo llamado `.env.local` en la **raíz del proyecto**. Usa el archivo `.env.example` como base y reemplaza sus marcadores con tus credenciales reales. La URL y las claves de Supabase deben obtenerse desde tu proyecto en [Supabase](https://supabase.com/).
 
 **¡MUY IMPORTANTE!** Después de crear o modificar este archivo, **debes reiniciar completamente el servidor de desarrollo**. Detenlo con `Ctrl+C` y vuelve a ejecutar `npm run dev`.
 
