@@ -130,3 +130,15 @@ Sigue las instrucciones de la CLI para seleccionar tu backend y completar el pro
 ## Convención de Usernames
 
 Los nombres de usuario no distinguen entre mayúsculas y minúsculas. Al crear, actualizar o iniciar sesión, la aplicación transforma automáticamente el valor ingresado a **minúsculas**. Si importas usuarios desde otro sistema, asegúrate de que los usernames estén en minúsculas para evitar duplicados o problemas de autenticación.
+
+## Soluci\u00f3n de Errores Comunes
+
+### "La acci\u00f3n de diagn\u00f3stico fall\u00f3 catastr\u00f3ficamente"
+
+Este mensaje suele aparecer cuando las variables de entorno de **Supabase** no est\u00e1n configuradas o no se est\u00e1 leyendo el archivo `.env.local`. Aseg\u00farate de tener definidos `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` y `SUPABASE_SERVICE_ROLE_KEY` (o alguno de sus alias) antes de iniciar la aplicaci\u00f3n.
+
+Si acabas de crear o modificar `.env.local`, reinicia el servidor de desarrollo con `Ctrl+C` y luego ejecuta nuevamente:
+
+```bash
+npm run dev
+```
