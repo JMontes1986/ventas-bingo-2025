@@ -19,8 +19,7 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "bcryptjs": ["./src/lib/bcryptjs.ts"]
+      "@/*": ["./src/*"]
       }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
