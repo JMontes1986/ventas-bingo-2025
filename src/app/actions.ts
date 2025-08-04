@@ -140,7 +140,7 @@ export async function login(credentials: { email: string; password?: string }): 
     const { data: cajero, error: queryError } = await supabaseAdmin
       .from('cajeros')
       .select('*, password_hash')
-      .eq('username', username)
+      .ilike('username', username)
       .single();
 
     if (queryError || !cajero) {
@@ -871,7 +871,7 @@ export async function createCajero(requestor: Cajero, formData: CajeroFormData):
     try {
         const { password, username, ...restOfData } = formData;
         const hashed = await bcrypt.hash(password, 10);
-        const dataToInsert = { ...restOfData, password_hash: hashed };
+        const dataToInsert = { ...restOfData, username: username.toLowerCase(), password_hash: hashed };
 
         const { data, error } = await supabaseAdmin
             .from('cajeros')
