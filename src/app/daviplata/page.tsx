@@ -165,7 +165,7 @@ export default function DaviplataPublicPage() {
 
     
     const displayArticles = useMemo(() => {
-        return articles.filter(p => p.visible_cliente);
+        return articles.filter(p => p.visible_cliente !== false);
     }, [articles]);
 
 
