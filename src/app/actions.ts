@@ -181,8 +181,16 @@ export async function login(credentials: { email: string; password?: string }): 
 export async function getArticles(): Promise<{data: Article[] | null, error: string | null}> {
   noStore();
   const { supabaseAdmin, error: adminClientError } = createAdminClient();
-  if (adminClientError || !supabaseAdmin) {
-    return { data: null, error: adminClientError };
+ if (!supabaseAdmin) {
+    let errorMessage = adminClientError || 'Error al crear el cliente de Supabase.';
+
+    if (adminClientError?.includes('URL')) {
+      errorMessage = 'Supabase URL no configurada';
+    } else if (adminClientError?.includes('service role')) {
+      errorMessage = 'Service role key faltante';
+    }
+
+    return { data: null, error: errorMessage };
   }
 
   try {
