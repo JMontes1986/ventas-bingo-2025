@@ -107,8 +107,7 @@ Este proyecto está configurado para ser desplegado en **Firebase App Hosting**.
     - **`NEXT_PUBLIC_SUPABASE_URL`**: La URL pública de tu proyecto de Supabase.
     - **`NEXT_PUBLIC_SUPABASE_ANON_KEY`**: Tu clave anónima pública de Supabase.
     - **`SUPABASE_SERVICE_ROLE_KEY`**: Tu clave de rol de servicio (secreta) de Supabase.
-    - **`GEMINI_API_KEY`**: Tu clave de API de Gemini.
-
+    **`GOOGLE_API_KEY`**: Tu clave de API de Gemini.
 ### Asignar Permisos a los Secretos
 
 1.  Una vez creados los secretos, debes dar permiso a Firebase App Hosting para que los lea.
