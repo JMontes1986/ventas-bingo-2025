@@ -100,7 +100,8 @@ export default function DaviplataPublicPage() {
             if (error) throw new Error(error);
             setArticles(data || []);
         } catch (err) {
-            toast({ variant: 'destructive', title: 'Error', description: 'No se pudieron cargar los productos.' });
+            const message = err instanceof Error ? err.message : 'No se pudieron cargar los productos.';
+            toast({ variant: 'destructive', title: 'Error', description: message })
         } finally {
             setIsLoading(false);
         }
