@@ -16,38 +16,25 @@ import * as bcrypt from 'bcryptjs';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseKey) {
-    throw new Error('Supabase URL or Anon Key is missing from environment variables.');
-}
-
 // Cliente de Supabase para operaciones del lado del cliente o públicas
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Se inicializa solo si existen las variables necesarias; de lo contrario será null
+const supabase =
+  supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
 
 // Función para crear el cliente de admin de forma segura BAJO DEMANDA
-const createAdminClient = (): { supabaseAdmin: SupabaseClient | null; error: string | null } => {
-   // Intenta leer la variable con cualquiera de los nombres que podrían usarse
-    // para la clave de servicio.
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-        || process.env.SUPABASE_SECRET_ROLE_KEY
-        || process.env.SUPABASE_SERVICE_KEY;
-
-    if (!serviceRoleKey) {
-        const errorMessage = "CRITICAL: SUPABASE_SERVICE_ROLE_KEY is not configured in the environment. The application cannot perform administrative actions.";
-        console.error(errorMessage, "Asegúrate de que la variable de clave de servicio esté en tu archivo .env.local o en los secretos de producción con uno de los nombres correctos.");
-        return { supabaseAdmin: null, error: errorMessage };
-    }
-
-    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
-        auth: {
-            autoRefreshToken: false,
-            persistSession: false
-        }
-    });
-
-    return { supabaseAdmin, error: null };
+// Se inicializa solo si existen las variables necesarias; de lo contrario será null
+const supabase =
+  supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
 };
 
+const supabaseAdmin = createClient(supabaseUrl!, serviceRoleKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  });
 
+  return { supabaseAdmin, error: null };
 // --- DIAGNOSTIC ACTION ---
 export async function runDiagnostics(): Promise<Record<string, {success: boolean, message: string, data?: any}>> {
     const results: Record<string, {success: boolean, message: string, data?: any}> = {};
@@ -57,11 +44,22 @@ export async function runDiagnostics(): Promise<Record<string, {success: boolean
         success: !!process.env.NEXT_PUBLIC_SUPABASE_URL && !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY && !!(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_ROLE_KEY) && !!process.env.GEMINI_API_KEY,
         message: `Supabase URL: ${process.env.NEXT_PUBLIC_SUPABASE_URL ? 'OK' : 'FALTA'}, Supabase Anon Key: ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'OK' : 'FALTA'}, Service Key: ${(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_ROLE_KEY) ? 'OK' : 'FALTA'}, Gemini Key: ${process.env.GEMINI_API_KEY ? 'OK' : 'FALTA'}`
     };
+    
+if (!supabase) {
+        results.supabaseConnection = {
+            success: false,
+            message: 'Supabase no está configurado. Verifica NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.'
+        };
+        return results;
+    }
 
     // 2. Test Supabase Admin Connection
     const { supabaseAdmin, error: adminClientError } = createAdminClient();
     if (adminClientError || !supabaseAdmin) {
-        results.supabaseConnection = { success: false, message: `Error al crear el cliente de Supabase Admin: ${adminClientError}` };
+        results.supabaseConnection = {
+            success: false,
+            message: `Error al crear el cliente de Supabase Admin: ${adminClientError}`
+        };
         return results;
     }
     results.supabaseConnection = { success: true, message: "Cliente de Supabase Admin creado exitosamente." };
