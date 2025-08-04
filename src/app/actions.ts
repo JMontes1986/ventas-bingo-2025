@@ -114,8 +114,9 @@ export async function runDiagnostics(): Promise<Record<string, {success: boolean
         console.error('Error inesperado en runDiagnostics:', err);
         results.critical_error = { success: false, message: 'Error inesperado: ' + err.message };
         return results;
-
-// --- AUTH ACTIONS ---
+       }
+  }
+  // --- AUTH ACTIONS ---
 
 export async function login(credentials: { email: string; password?: string }): Promise<{ success: boolean; user?: Omit<Cajero, 'password'>, error?: string }> {
   if (!credentials.email || !credentials.password) {
