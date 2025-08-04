@@ -60,8 +60,15 @@ export async function runDiagnostics(): Promise<Record<string, {success: boolean
     try {
         // 1. Check Environment Variables
         results.envVars = {
-            success: !!process.env.NEXT_PUBLIC_SUPABASE_URL && !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY && !!(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_ROLE_KEY) && !!process.env.GEMINI_API_KEY,
-            message: `Supabase URL: ${process.env.NEXT_PUBLIC_SUPABASE_URL ? 'OK' : 'FALTA'}, Supabase Anon Key: ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'OK' : 'FALTA'}, Service Key: ${(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_ROLE_KEY) ? 'OK' : 'FALTA'}, Gemini Key: ${process.env.GEMINI_API_KEY ? 'OK' : 'FALTA'}`
+           success:
+                !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
+                !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
+                !!(
+                    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+                    process.env.SUPABASE_SECRET_ROLE_KEY
+                ) &&
+                !!process.env.GOOGLE_API_KEY,
+            message: `Supabase URL: ${process.env.NEXT_PUBLIC_SUPABASE_URL ? 'OK' : 'FALTA'}, Supabase Anon Key: ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'OK' : 'FALTA'}, Service Key: ${(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_ROLE_KEY) ? 'OK' : 'FALTA'}, Google API Key: ${process.env.GOOGLE_API_KEY ? 'OK' : 'FALTA'}`
         };
 
     if (!supabase) {
