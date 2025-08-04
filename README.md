@@ -142,3 +142,4 @@ Si acabas de crear o modificar `.env.local`, reinicia el servidor de desarrollo 
 ```bash
 npm run dev
 ```
+Si alguna de estas variables falta, las acciones del servidor devolverán un error descriptivo en lugar de lanzar una excepción y `runDiagnostics` indicará qué variables están ausentes.
