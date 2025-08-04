@@ -22,12 +22,29 @@ const supabase =
   supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
 
 // Función para crear el cliente de admin de forma segura BAJO DEMANDA
-// Se inicializa solo si existen las variables necesarias; de lo contrario será null
-const supabase =
-  supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
-};
+function createAdminClient(): {
+  supabaseAdmin: SupabaseClient | null;
+  error: string | null;
+} {
+  const serviceRoleKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.SUPABASE_SECRET_ROLE_KEY;
 
-const supabaseAdmin = createClient(supabaseUrl!, serviceRoleKey, {
+  if (!supabaseUrl) {
+    return {
+      supabaseAdmin: null,
+      error: 'Supabase URL no está configurada.',
+    };
+  }
+
+ if (!serviceRoleKey) {
+    return {
+      supabaseAdmin: null,
+      error: 'Supabase service role key no está configurada.',
+    };
+  }
+
+  const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
@@ -35,6 +52,7 @@ const supabaseAdmin = createClient(supabaseUrl!, serviceRoleKey, {
   });
 
   return { supabaseAdmin, error: null };
+  }
 // --- DIAGNOSTIC ACTION ---
 export async function runDiagnostics(): Promise<Record<string, {success: boolean, message: string, data?: any}>> {
     const results: Record<string, {success: boolean, message: string, data?: any}> = {};
