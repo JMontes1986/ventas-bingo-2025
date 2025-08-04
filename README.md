@@ -79,7 +79,8 @@ En producción, estas variables deben almacenarse en **Google Secret Manager** y
 2.  **Inicia Sesión**: Si no lo has hecho, inicia sesión con tu cuenta de Google.
 3.  **Crea una Clave de API**: Haz clic en el botón **"Crear clave de API"**. Es posible que se te pida que crees un nuevo proyecto de Google Cloud si no tienes uno.
 4.  **Copia tu Clave**: Una vez generada, cópiala al portapapeles.
-5.  **Pégala en `.env.local`**: Regresa a tu editor de código y pega la clave como el valor de la variable `GEMINI_API_KEY`.
+**Pégala en `.env.local`**: Regresa a tu editor de código y pega la clave como el valor de la variable `GOOGLE_API_KEY`.
+6.  **Reinicia el servidor**: Después de guardar los cambios en `.env.local`, detén y vuelve a iniciar `npm run dev` para que la clave sea reconocida.
 
 ### 5. Ejecutar la Aplicación
 Una vez instaladas las dependencias, inicia el servidor de desarrollo.
