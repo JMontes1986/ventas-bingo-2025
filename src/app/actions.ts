@@ -57,60 +57,63 @@ function createAdminClient(): {
 export async function runDiagnostics(): Promise<Record<string, {success: boolean, message: string, data?: any}>> {
     const results: Record<string, {success: boolean, message: string, data?: any}> = {};
 
-    // 1. Check Environment Variables
-    results.envVars = {
-        success: !!process.env.NEXT_PUBLIC_SUPABASE_URL && !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY && !!(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_ROLE_KEY) && !!process.env.GEMINI_API_KEY,
-        message: `Supabase URL: ${process.env.NEXT_PUBLIC_SUPABASE_URL ? 'OK' : 'FALTA'}, Supabase Anon Key: ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'OK' : 'FALTA'}, Service Key: ${(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_ROLE_KEY) ? 'OK' : 'FALTA'}, Gemini Key: ${process.env.GEMINI_API_KEY ? 'OK' : 'FALTA'}`
-    };
-    
-if (!supabase) {
-        results.supabaseConnection = {
-            success: false,
-            message: 'Supabase no está configurado. Verifica NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.'
+    try {
+        // 1. Check Environment Variables
+        results.envVars = {
+            success: !!process.env.NEXT_PUBLIC_SUPABASE_URL && !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY && !!(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_ROLE_KEY) && !!process.env.GEMINI_API_KEY,
+            message: `Supabase URL: ${process.env.NEXT_PUBLIC_SUPABASE_URL ? 'OK' : 'FALTA'}, Supabase Anon Key: ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'OK' : 'FALTA'}, Service Key: ${(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_ROLE_KEY) ? 'OK' : 'FALTA'}, Gemini Key: ${process.env.GEMINI_API_KEY ? 'OK' : 'FALTA'}`
         };
-        return results;
-    }
+
+    if (!supabase) {
+            results.supabaseConnection = {
+                success: false,
+                message: 'Supabase no está configurado. Verifica NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY.'
+            };
+            return results;
+        }
 
     // 2. Test Supabase Admin Connection
-    const { supabaseAdmin, error: adminClientError } = createAdminClient();
-    if (adminClientError || !supabaseAdmin) {
-        results.supabaseConnection = {
-            success: false,
-            message: `Error al crear el cliente de Supabase Admin: ${adminClientError}`
-        };
-        return results;
-    }
-    results.supabaseConnection = { success: true, message: "Cliente de Supabase Admin creado exitosamente." };
+        const { supabaseAdmin, error: adminClientError } = createAdminClient();
+        if (adminClientError || !supabaseAdmin) {
+            results.supabaseConnection = {
+                success: false,
+                message: `Error al crear el cliente de Supabase Admin: ${adminClientError}`
+            };
+            return results;
+        }
+        results.supabaseConnection = { success: true, message: "Cliente de Supabase Admin creado exitosamente." };
 
     // 3. Test Supabase Query
-    try {
-        const { data, error } = await supabaseAdmin.from('productos').select('id').limit(1);
-        if (error) throw error;
-        results.supabaseQuery = { success: true, message: "Consulta a la tabla 'productos' exitosa.", data };
-    } catch (e: any) {
-        results.supabaseQuery = { success: false, message: `Error en la consulta a Supabase: ${e.message}` };
-        return results;
-    }
-
-    // 4. Test Genkit AI Flow
-    try {
-        const llmResponse = await ai.generate({
-            prompt: "Hola, solo responde con 'OK'",
-            model: 'googleai/gemini-1.5-flash-latest',
-            output: { format: 'text' }
-        });
-        const responseText = llmResponse.text;
-        if (!responseText || !responseText.includes('OK')) {
-           throw new Error(`Respuesta inesperada de la IA: ${responseText}`);
+        try {
+            const { data, error } = await supabaseAdmin.from('productos').select('id').limit(1);
+            if (error) throw error;
+            results.supabaseQuery = { success: true, message: "Consulta a la tabla 'productos' exitosa.", data };
+        } catch (e: any) {
+            results.supabaseQuery = { success: false, message: `Error en la consulta a Supabase: ${e.message}` };
+            return results;
         }
-        results.genkitTest = { success: true, message: `Respuesta de Genkit AI recibida: ${responseText}` };
-    } catch (e: any) {
-        results.genkitTest = { success: false, message: `Error en el flujo de Genkit: ${e.message}` };
-    }
 
-    return results;
-}
+      // 4. Test Genkit AI Flow
+        try {
+            const llmResponse = await ai.generate({
+                prompt: "Hola, solo responde con 'OK'",
+                model: 'googleai/gemini-1.5-flash-latest',
+                output: { format: 'text' }
+            });
+            const responseText = llmResponse.text;
+            if (!responseText || !responseText.includes('OK')) {
+                throw new Error(`Respuesta inesperada de la IA: ${responseText}`);
+            }
+            results.genkitTest = { success: true, message: `Respuesta de Genkit AI recibida: ${responseText}` };
+        } catch (e: any) {
+            results.genkitTest = { success: false, message: `Error en el flujo de Genkit: ${e.message}` };
+        }
 
+        return results;
+    } catch (err: any) {
+        console.error('Error inesperado en runDiagnostics:', err);
+        results.critical_error = { success: false, message: 'Error inesperado: ' + err.message };
+        return results;
 
 // --- AUTH ACTIONS ---
 
