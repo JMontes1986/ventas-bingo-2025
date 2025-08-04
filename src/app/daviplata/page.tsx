@@ -508,14 +508,14 @@ export default function DaviplataPublicPage() {
                                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                                                 {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-32 w-full" />)}
                                             </div>
-                                        ) : (
+                                        ) : displayArticles.length > 0 ? (
                                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                                                 {displayArticles.map(article => {
                                                     const isSoldOut = !article.activo || (article.stock_disponible !== undefined && article.stock_disponible <= 0);
                                                     const imageUrl = article.imagen_url || 'https://placehold.co/300x300.png';
                                                     return (
-                                                        <Card 
-                                                            key={article.id} 
+                                                       <Card
+                                                            key={article.id}
                                                             className={cn(
                                                                 "flex flex-col overflow-hidden transition-shadow",
                                                                 !isSoldOut ? "cursor-pointer hover:shadow-lg" : "opacity-60 bg-gray-100 cursor-not-allowed"
@@ -545,6 +545,11 @@ export default function DaviplataPublicPage() {
                                                     )
                                                 })}
                                             </div>
+                                         ) : (
+                                            <Alert>
+                                                <AlertTitle>No hay artículos disponibles</AlertTitle>
+                                                <AlertDescription>Por favor, vuelve más tarde.</AlertDescription>
+                                            </Alert>
                                         )}
                                     </CardContent>
                                 </Card>
