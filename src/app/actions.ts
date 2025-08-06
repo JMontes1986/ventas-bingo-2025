@@ -143,16 +143,22 @@ export async function login(credentials: { email: string; password?: string }): 
       .ilike('username', username)
       .single();
 
-    if (queryError || !cajero) {
-      console.error('Error de Supabase al buscar cajero o no encontrado:', queryError);
+    if (queryError) {
+      console.error('Error de Supabase al buscar cajero:', queryError);
+      return { success: false, error: 'Usuario o contraseña incorrectos.' };
+    }
+
+    if (!cajero) {
+      console.warn(`Intento de acceso con usuario inexistente: ${username}`);
       return { success: false, error: 'Usuario o contraseña incorrectos.' };
     }
     
     const isPasswordCorrect = await bcrypt.compare(credentials.password, cajero.password_hash ?? '');
 
     if (!isPasswordCorrect) {
+      console.warn(`Contraseña incorrecta para el usuario ${cajero.username}`);
         await createAuditLog(
-          { id: cajero.id, nombre_completo: cajero.nombre_completo, username: cajero.username, activo: cajero.activo }, 
+          { id: cajero.id, nombre_completo: cajero.nombre_completo, username: cajero.username, activo: cajero.activo },
           'LOGIN_FALLIDO', 
           `Intento de inicio de sesión fallido para el usuario ${cajero.username}.`
         );
@@ -160,7 +166,8 @@ export async function login(credentials: { email: string; password?: string }): 
     }
     
     if (!cajero.activo) {
-      return { success: false, error: 'El usuario está inactivo y no puede iniciar sesión.' };
+      console.warn(`Intento de acceso para usuario inactivo ${cajero.username}`);
+      return { success: false, error: 'Usuario o contraseña incorrectos.' };
     }
     
     const { password_hash, ...userToReturn } = cajero;
