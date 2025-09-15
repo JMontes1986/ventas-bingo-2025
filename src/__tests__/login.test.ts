@@ -9,19 +9,25 @@ describe('login action', () => {
   });
 
   it('logs in successfully with correct credentials', async () => {
-    const result = await login({ email: 'admin', password: 'secret' });
-    expect(result).toEqual({ success: true, user: expect.objectContaining({ username: 'admin' }) });
+    const result = await login({ email: 'ADMIN', password: 'secret' });
+    expect(result).toEqual({
+      success: true,
+      user: expect.objectContaining({ username: 'admin' }),
+    });
   });
 
   it('fails login with wrong password', async () => {
     const result = await login({ email: 'admin', password: 'wrong' });
-    expect(result.success).toBe(false);
-    expect(result.error).toBe('Usuario o contraseña incorrectos.');
+    expect(result).toEqual({ success: false, error: 'CONTRASENA_INCORRECTA' });
   });
 
-  it('normalizes username case', async () => {
-    const result = await login({ email: 'ADMIN', password: 'secret' });
-    expect(result.success).toBe(true);
-    expect(result.user?.username).toBe('admin');
+  it('fails login when user not found', async () => {
+    const result = await login({ email: 'unknown', password: 'secret' });
+    expect(result).toEqual({ success: false, error: 'USUARIO_NO_ENCONTRADO' });
+  });
+
+  it('fails login when user is inactive', async () => {
+    const result = await login({ email: 'inactive', password: 'secret' });
+    expect(result).toEqual({ success: false, error: 'USUARIO_INACTIVO' });
   });
 });
