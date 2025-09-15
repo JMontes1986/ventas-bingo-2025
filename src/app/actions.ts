@@ -140,7 +140,7 @@ export async function login(credentials: { email: string; password?: string }): 
     const { data: cajero, error: queryError } = await supabaseAdmin
       .from('cajeros')
       .select('*, password_hash')
-      .ilike('username', username)
+      .eq('username', username)
       .single();
 
     if (queryError) {
