@@ -145,12 +145,17 @@ export async function login(credentials: { email: string; password?: string }): 
 
     if (queryError) {
       console.error('Error de Supabase al buscar cajero:', queryError);
-      return { success: false, error: 'Usuario o contraseña incorrectos.' };
+      return { success: false, error: 'ERROR_SUPABASE' };
     }
 
     if (!cajero) {
       console.warn(`Intento de acceso con usuario inexistente: ${username}`);
-      return { success: false, error: 'Usuario o contraseña incorrectos.' };
+      await createAuditLog(
+        { id: '0', nombre_completo: 'Usuario Desconocido', username, activo: false },
+        'USUARIO_NO_ENCONTRADO',
+        `Intento de inicio de sesión con usuario inexistente: ${username}.`
+      );
+      return { success: false, error: 'USUARIO_NO_ENCONTRADO' };
     }
     
     const isPasswordCorrect = await bcrypt.compare(credentials.password, cajero.password_hash ?? '');
@@ -158,16 +163,21 @@ export async function login(credentials: { email: string; password?: string }): 
     if (!isPasswordCorrect) {
       console.warn(`Contraseña incorrecta para el usuario ${cajero.username}`);
         await createAuditLog(
-          { id: cajero.id, nombre_completo: cajero.nombre_completo, username: cajero.username, activo: cajero.activo },
-          'LOGIN_FALLIDO', 
-          `Intento de inicio de sesión fallido para el usuario ${cajero.username}.`
-        );
-        return { success: false, error: 'Usuario o contraseña incorrectos.' };
+        { id: cajero.id, nombre_completo: cajero.nombre_completo, username: cajero.username, activo: cajero.activo },
+        'LOGIN_FALLIDO',
+        `Intento de inicio de sesión fallido para el usuario ${cajero.username}.`
+      );
+      return { success: false, error: 'CONTRASENA_INCORRECTA' };
     }
     
     if (!cajero.activo) {
       console.warn(`Intento de acceso para usuario inactivo ${cajero.username}`);
-      return { success: false, error: 'Usuario o contraseña incorrectos.' };
+      await createAuditLog(
+        { id: cajero.id, nombre_completo: cajero.nombre_completo, username: cajero.username, activo: cajero.activo },
+        'USUARIO_INACTIVO',
+        `Intento de inicio de sesión para usuario inactivo ${cajero.username}.`
+      );
+      return { success: false, error: 'USUARIO_INACTIVO' };
     }
     
     const { password_hash, ...userToReturn } = cajero;
