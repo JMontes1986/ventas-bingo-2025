@@ -39,10 +39,19 @@ export default function LoginPage() {
     setIsLoading(false);
 
     if (!result.success) {
-       toast({
+       const errorMessages: Record<string, string> = {
+        USUARIO_NO_ENCONTRADO: 'Usuario no encontrado.',
+        CONTRASENA_INCORRECTA: 'Contraseña incorrecta.',
+        USUARIO_INACTIVO: 'Usuario inactivo.',
+        ERROR_SUPABASE: 'Error al conectar con el servidor. Intente nuevamente.',
+      };
+
+      toast({
         variant: 'destructive',
         title: 'Error de inicio de sesión',
-        description: result.error || 'Usuario o contraseña incorrectos. Por favor, intente de nuevo.',
+        description:
+          (result.error && errorMessages[result.error]) ||
+          'Usuario o contraseña incorrectos. Por favor, intente de nuevo.',
       });
     }
     // En caso de éxito, el hook `useAuth` se encargará de la redirección.
