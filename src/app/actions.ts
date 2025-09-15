@@ -145,6 +145,11 @@ export async function login(credentials: { email: string; password?: string }): 
 
     if (queryError) {
       console.error('Error de Supabase al buscar cajero:', queryError);
+      await createAuditLog(
+        { id: '0', nombre_completo: 'Usuario Desconocido', username, activo: false },
+        'LOGIN_ERROR_SUPABASE',
+        `Error al buscar usuario ${username} en Supabase. Motivo: ${queryError.message}`
+      );
       return { success: false, error: 'ERROR_SUPABASE' };
     }
 
@@ -152,8 +157,8 @@ export async function login(credentials: { email: string; password?: string }): 
       console.warn(`Intento de acceso con usuario inexistente: ${username}`);
       await createAuditLog(
         { id: '0', nombre_completo: 'Usuario Desconocido', username, activo: false },
-        'USUARIO_NO_ENCONTRADO',
-        `Intento de inicio de sesión con usuario inexistente: ${username}.`
+        'LOGIN_USUARIO_NO_ENCONTRADO',
+        `Intento de inicio de sesión con usuario inexistente ${username}. Motivo: usuario no encontrado.`
       );
       return { success: false, error: 'USUARIO_NO_ENCONTRADO' };
     }
@@ -174,8 +179,8 @@ export async function login(credentials: { email: string; password?: string }): 
       console.warn(`Intento de acceso para usuario inactivo ${cajero.username}`);
       await createAuditLog(
         { id: cajero.id, nombre_completo: cajero.nombre_completo, username: cajero.username, activo: cajero.activo },
-        'USUARIO_INACTIVO',
-        `Intento de inicio de sesión para usuario inactivo ${cajero.username}.`
+       'LOGIN_USUARIO_INACTIVO',
+        `Intento de inicio de sesión para usuario ${cajero.username}. Motivo: usuario inactivo.`
       );
       return { success: false, error: 'USUARIO_INACTIVO' };
     }
