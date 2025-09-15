@@ -136,11 +136,11 @@ export async function login(credentials: { email: string; password?: string }): 
   }
 
   try {
-      const username = credentials.email.toLowerCase();
+      const username = credentials.email;
     const { data: cajero, error: queryError } = await supabaseAdmin
       .from('cajeros')
       .select('*, password_hash')
-      .eq('username', username)
+      .ilike('username', username)
       .single();
 
     if (queryError) {
