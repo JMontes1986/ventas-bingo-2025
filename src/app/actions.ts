@@ -28,7 +28,8 @@ function createAdminClient(): {
 } {
   const serviceRoleKey =
     process.env.SUPABASE_SERVICE_ROLE_KEY ||
-    process.env.SUPABASE_SECRET_ROLE_KEY;
+    process.env.SUPABASE_SECRET_ROLE_KEY ||
+    process.env.SUPABASE_SERVICE_KEY;
 
   if (!supabaseUrl) {
     return {
@@ -37,7 +38,7 @@ function createAdminClient(): {
     };
   }
 
- if (!serviceRoleKey) {
+if (!serviceRoleKey) {
     return {
       supabaseAdmin: null,
       error: 'Supabase service role key no está configurada.',
@@ -52,23 +53,25 @@ function createAdminClient(): {
   });
 
   return { supabaseAdmin, error: null };
-  }
+}
 // --- DIAGNOSTIC ACTION ---
 export async function runDiagnostics(): Promise<Record<string, {success: boolean, message: string, data?: any}>> {
     const results: Record<string, {success: boolean, message: string, data?: any}> = {};
 
     try {
         // 1. Check Environment Variables
-        results.envVars = {
+      const serviceKey =
+            process.env.SUPABASE_SERVICE_ROLE_KEY ||
+            process.env.SUPABASE_SECRET_ROLE_KEY ||
+            process.env.SUPABASE_SERVICE_KEY;  
+      
+      results.envVars = {
            success:
                 !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
                 !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
-                !!(
-                    process.env.SUPABASE_SERVICE_ROLE_KEY ||
-                    process.env.SUPABASE_SECRET_ROLE_KEY
-                ) &&
+                !!serviceKey &&
                 !!process.env.GOOGLE_API_KEY,
-            message: `Supabase URL: ${process.env.NEXT_PUBLIC_SUPABASE_URL ? 'OK' : 'FALTA'}, Supabase Anon Key: ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'OK' : 'FALTA'}, Service Key: ${(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_ROLE_KEY) ? 'OK' : 'FALTA'}, Google API Key: ${process.env.GOOGLE_API_KEY ? 'OK' : 'FALTA'}`
+                message: `Supabase URL: ${process.env.NEXT_PUBLIC_SUPABASE_URL ? 'OK' : 'FALTA'}, Supabase Anon Key: ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'OK' : 'FALTA'}, Service Key: ${serviceKey ? 'OK' : 'FALTA'}, Google API Key: ${process.env.GOOGLE_API_KEY ? 'OK' : 'FALTA'}`
         };
 
     if (!supabase) {
