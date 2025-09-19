@@ -73,6 +73,32 @@ Para que la aplicación funcione en tu entorno local, crea un archivo llamado `.
 
 En producción, estas variables deben almacenarse en **Google Secret Manager** y nunca dentro del repositorio.
 
+#### Generar hashes de contraseñas para cajeros
+
+Para poblar la tabla de usuarios en Supabase con contraseñas seguras, define las variables de entorno `PASSWORD_*` (en mayúsculas) con la contraseña en texto plano para cada cajero:
+
+- `PASSWORD_ADMINISTRADOR`
+- `PASSWORD_CAJA1`
+- `PASSWORD_CAJA2`
+- `PASSWORD_ENTRADA`
+- `PASSWORD_VENTAS1`
+- `PASSWORD_DATOS`
+
+Puedes exportarlas temporalmente en la misma terminal antes de ejecutar el script, por ejemplo:
+
+```bash
+export PASSWORD_ADMINISTRADOR="mi-clave-super-secreta"
+export PASSWORD_CAJA1="clave-caja-1"
+# ...exporta el resto según corresponda
+```
+
+Luego, genera los hashes bcrypt ejecutando:
+
+```bash
+npm run generate:cajero-hashes
+```
+
+El comando utilizará `tsx` para ejecutar `scripts/generateCajeroHashes.ts` y mostrará en la terminal el hash correspondiente a cada usuario para que puedas copiarlo y guardarlo en la base de datos.
 #### ¿Dónde obtener la Clave de API de Gemini?
 
 1.  **Ve a Google AI Studio**: Abre el siguiente enlace en tu navegador: [**makersuite.google.com/app/apikey**](https://makersuite.google.com/app/apikey).
