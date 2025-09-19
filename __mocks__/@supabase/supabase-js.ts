@@ -1,5 +1,5 @@
-const users = [
- {
+const initialUsers = [
+  {
     id: 1,
     username: 'admin',
     password_hash:
@@ -15,7 +15,17 @@ const users = [
     nombre_completo: 'Inactive',
     activo: false,
   },
+{
+    id: 3,
+    username: 'legacy',
+    password_hash: '',
+    password: 'legacy-secret',
+    nombre_completo: 'Legacy',
+    activo: true,
+  },
 ];
+
+const users = initialUsers.map(user => ({ ...user }));
 
 class TableQuery {
   table: string;
@@ -23,7 +33,9 @@ class TableQuery {
   value?: string;
   operator?: 'eq' | 'ilike';
 
-  constructor(table: string) {
+ updateData?: Record<string, any>;
+ 
+ constructor(table: string) {
     this.table = table;
   }
 
@@ -31,11 +43,24 @@ class TableQuery {
     return this;
   }
 
+ update(data: Record<string, any>) {
+    this.updateData = data;
+    return this;
+  } 
+ 
   eq(field: string, value: any) {
     this.field = field;
     this.value = value;
     this.operator = 'eq';
-    return this;
+   
+    if (this.updateData && this.table === 'cajeros') {
+      const user = users.find(u => u[field] === value);
+      if (user) {
+        Object.assign(user, this.updateData);
+      }
+      this.updateData = undefined;
+    } 
+   return this;
   }
 
   ilike(field: string, value: any) {
@@ -73,3 +98,8 @@ export class SupabaseClient {
 }
 
 export const createClient = jest.fn(() => new SupabaseClient());
+
+export const __mockUsers = users;
+export const __resetMockUsers = () => {
+  users.splice(0, users.length, ...initialUsers.map(user => ({ ...user })));
+};
