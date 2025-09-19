@@ -221,7 +221,7 @@ export async function login(credentials: { email: string; password?: string }): 
       return { success: false, error: 'USUARIO_INACTIVO' };
     }
     
-    const { password_hash, password, ...userToReturn } = cajero;
+    const { password_hash: _passwordHash, password: _password, ...userToReturn } = cajero;
 
     await createAuditLog(userToReturn, 'LOGIN_EXITOSO', `El usuario ${userToReturn.username} ha iniciado sesión.`);
 
