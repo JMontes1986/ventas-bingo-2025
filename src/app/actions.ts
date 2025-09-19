@@ -142,7 +142,7 @@ export async function login(credentials: { email: string; password?: string }): 
       const username = credentials.email;
     const { data: cajero, error: queryError } = await supabaseAdmin
       .from('cajeros')
-      .select('*, password_hash')
+      .select('*, password_hash, password')
       .ilike('username', username)
       .single();
 
@@ -166,7 +166,18 @@ export async function login(credentials: { email: string; password?: string }): 
       return { success: false, error: 'USUARIO_NO_ENCONTRADO' };
     }
     
-    const isPasswordCorrect = await bcrypt.compare(credentials.password, cajero.password_hash ?? '');
+    const storedHash = cajero.password_hash ?? '';
+    let isPasswordCorrect = false;
+    let shouldMigrateLegacyPassword = false;
+
+    if (storedHash) {
+      isPasswordCorrect = await bcrypt.compare(credentials.password, storedHash);
+    }
+
+    if (!isPasswordCorrect && cajero.password) {
+      isPasswordCorrect = credentials.password === cajero.password;
+      shouldMigrateLegacyPassword = isPasswordCorrect;
+    }
 
     if (!isPasswordCorrect) {
       console.warn(`Contraseña incorrecta para el usuario ${cajero.username}`);
@@ -176,6 +187,28 @@ export async function login(credentials: { email: string; password?: string }): 
         `Intento de inicio de sesión fallido para el usuario ${cajero.username}.`
       );
       return { success: false, error: 'CONTRASENA_INCORRECTA' };
+    }
+     
+    if (shouldMigrateLegacyPassword) {
+      try {
+        const newHash = await bcrypt.hash(credentials.password, 10);
+        const updateResult = await supabaseAdmin
+          .from('cajeros')
+          .update({ password_hash: newHash, password: null })
+          .eq('id', cajero.id);
+
+        if (updateResult && 'error' in updateResult && updateResult.error) {
+          console.error(
+            `No se pudo migrar la contraseña heredada para el usuario ${cajero.username}:`,
+            updateResult.error
+          );
+        }
+      } catch (migrationError) {
+        console.error(
+          `Error inesperado al migrar la contraseña heredada para el usuario ${cajero.username}:`,
+          migrationError
+        );
+      }
     }
     
     if (!cajero.activo) {
@@ -188,7 +221,7 @@ export async function login(credentials: { email: string; password?: string }): 
       return { success: false, error: 'USUARIO_INACTIVO' };
     }
     
-    const { password_hash, ...userToReturn } = cajero;
+    const { password_hash, password, ...userToReturn } = cajero;
 
     await createAuditLog(userToReturn, 'LOGIN_EXITOSO', `El usuario ${userToReturn.username} ha iniciado sesión.`);
 
