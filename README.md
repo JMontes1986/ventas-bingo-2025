@@ -37,7 +37,7 @@ Este proyecto es un sistema de punto de venta (POS) robusto y moderno, diseñado
 ### 4. Gestión de Artículos y Cajeros (Usuarios)
 - Panel para crear, editar y marcar artículos como "agotados".
 - Sistema de gestión de usuarios (cajeros) con un control de permisos granular basado en roles.
-Las contraseñas de los cajeros se almacenan en Supabase usando hashes generados con bcrypt.
+Las contraseñas de los cajeros se almacenan en Supabase usando hashes generados con bcrypt. Puedes generarlos localmente ejecutando el script `scripts/generateCajeroHashes.ts`, que imprime cada username en minúsculas junto a su hash. Asegúrate de que los usernames configurados en Supabase se mantengan en minúsculas para que coincidan con la convención de la aplicación.
 ### 5. Módulo de Inteligencia Artificial "Molly Colgemelli"
 - **Análisis de Seguridad de Transacciones:** Una IA analiza cada transacción (tanto de cajeros como de Daviplata) para detectar patrones inusuales o potencialmente fraudulentos, alertando en los logs sin interrumpir las ventas rápidas.
 - **Asistente de Chat para Padres:** Un chatbot de IA en la página de autogestión que responde preguntas sobre el proceso de compra y el evento, con la capacidad de que un administrador intervenga en la conversación en tiempo real.
