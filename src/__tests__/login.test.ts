@@ -16,6 +16,9 @@ describe('login action', () => {
       success: true,
       user: expect.objectContaining({ username: 'admin' }),
     });
+    
+    expect(result.user).not.toHaveProperty('password_hash');
+    expect(result.user).not.toHaveProperty('password');
   });
 
   it('fails login with wrong password', async () => {
