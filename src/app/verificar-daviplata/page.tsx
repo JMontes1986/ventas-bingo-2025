@@ -234,7 +234,7 @@ function VerifyDaviplataPageContent() {
         if (isScanning && videoRef.current?.readyState === videoRef.current?.HAVE_ENOUGH_DATA) {
             const video = videoRef.current;
             const canvas = canvasRef.current;
-            if (canvas) {
+            if (canvas && video) {
                 const ctx = canvas.getContext('2d');
                 if (ctx) {
                     canvas.height = video.videoHeight;
