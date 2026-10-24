@@ -2,7 +2,9 @@ name: Validate migration candidate
 on:
   push:
     branches: [security/2026-10-23-wave2-upgrades]
-    paths: [.github/workflows/wave2-migration-check.yml]
+    paths:
+      - '.github/workflows/wave2-migration-check.yml'
+      - 'src/**'
   workflow_dispatch:
 permissions:
   contents: write
