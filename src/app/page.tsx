@@ -185,7 +185,7 @@ export default function SalesPage() {
         if (articlesResult.error) throw new Error(`Artículos: ${articlesResult.error}`);
         if (salesByArticleResult.error) throw new Error(`Ventas: ${salesByArticleResult.error}`);
         if (returnsResult.error) throw new Error(`Devoluciones: ${returnsResult.error}`);
-        if (convResult.error) throw new Error(`Conversaciones: ${convResult.error}`);
+        if ('error' in convResult && convResult.error) throw new Error(`Conversaciones: ${convResult.error}`);
 
 
         setArticles(articlesResult.data || []);

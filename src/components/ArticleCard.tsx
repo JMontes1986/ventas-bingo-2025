@@ -50,7 +50,7 @@ export default function ArticleCard({ article, stats, onAddToCart }: ArticleCard
   const imageUrl = article.imagen_url || 'https://placehold.co/300x300.png';
   
   const hasStock = typeof stats.stock === 'number';
-  const isSoldOut = !article.activo || (hasStock && stats.stock <= 0);
+  const isSoldOut = !article.activo || (hasStock && (stats.stock ?? 0) <= 0);
   const canBeSold = !isSoldOut;
 
   const formatCurrency = (value: number) => {

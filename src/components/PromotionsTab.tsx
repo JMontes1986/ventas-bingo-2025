@@ -47,7 +47,7 @@ export default function PromotionsTab({ promotions, onAddToCart, getItemsInCart 
                     {promotions.map(promo => {
                         const itemsInCart = getItemsInCart(String(promo.id));
                         const hasStock = typeof promo.stock_disponible === 'number';
-                        const isSoldOut = !promo.activo || (hasStock && promo.stock_disponible <= 0);
+                        const isSoldOut = !promo.activo || (hasStock && (promo.stock_disponible ?? 0) <= 0);
 
                         return (
                             <Card 

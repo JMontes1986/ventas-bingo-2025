@@ -1540,7 +1540,7 @@ export async function runStressTest(
                 const article = articles[Math.floor(Math.random() * articles.length)];
                 const quantity = Math.floor(Math.random() * 2) + 1;
                 cart.push({ article, quantity });
-                subtotal += article.precio * item.quantity;
+                subtotal += article.precio * quantity;
             }
 
             const orderDetails: DaviplataOrderDetail[] = cart.map(item => ({
