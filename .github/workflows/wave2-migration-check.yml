@@ -1,0 +1,37 @@
+name: Validate migration candidate
+on:
+  push:
+    branches: [security/2026-10-23-wave2-upgrades]
+    paths: [.github/workflows/wave2-migration-check.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  lockfile-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Generate lockfile
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Verify reproducible install
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Commit lockfile on isolated branch
+        run: |
+          if ! git diff --quiet -- package-lock.json; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add package-lock.json
+            git commit -m 'security: synchronize wave2 npm lockfile'
+            git push origin HEAD:security/2026-10-23-wave2-upgrades
+          fi
+      - name: Typecheck
+        run: npm run typecheck --if-present
+      - name: Build
+        run: npm run build --if-present
